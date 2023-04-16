@@ -148,7 +148,6 @@ class _OtpTextFieldState extends State<OtpTextField> {
                 counterText: "",
                 filled: widget.filled,
                 fillColor: widget.fillColor,
-                focusColor: widget.focusColor,
                 focusedBorder: widget.showFieldAsBox
                     ? outlineBorder(widget.focusedBorderColor)
                     : underlineInputBorder(widget.focusedBorderColor),
@@ -255,13 +254,11 @@ class _OtpTextFieldState extends State<OtpTextField> {
     required int indexOfTextField,
   }) {
     //only change focus to the previous textField if the value entered has a length zero
-    if (value.length == 0 || value.isEmpty) {
-      //if the textField in focus is not the first textField,
-      // change focus to the previous textField
-      if (indexOfTextField != 0) {
-        //change focus to the next textField
-        FocusScope.of(context).requestFocus(_focusNodes[indexOfTextField - 1]);
-      }
+    //if the textField in focus is not the first textField,
+    // change focus to the previous textField
+    if (indexOfTextField != 0) {
+      //change focus to the next textField
+      FocusScope.of(context).requestFocus(_focusNodes[indexOfTextField - 1]);
     }
   }
 
