@@ -31,9 +31,10 @@ class OtpTextField extends StatefulWidget {
   final bool filled;
   final bool autoFocus;
   final bool readOnly;
-   bool clearText;
+  bool clearText;
   final bool hasCustomInputDecoration;
   final Color fillColor;
+  final Color focusColor;
   final BorderRadius borderRadius;
   final InputDecoration? decoration;
   final List<TextStyle?> styles;
@@ -66,14 +67,13 @@ class OtpTextField extends StatefulWidget {
     this.filled = false,
     this.fillColor = const Color(0xFFFFFFFF),
     this.readOnly = false,
+    this.focusColor = const Color(0xFFFFFFFF),
     this.decoration,
     this.onCodeChanged,
     this.borderRadius = const BorderRadius.all(Radius.circular(4.0)),
     this.inputFormatters,
   })  : assert(numberOfFields > 0),
-        assert(styles.length > 0
-            ? styles.length == numberOfFields
-            : styles.length == 0);
+        assert(styles.length > 0 ? styles.length == numberOfFields : styles.length == 0);
 
   @override
   _OtpTextFieldState createState() => _OtpTextFieldState();
@@ -99,12 +99,12 @@ class _OtpTextFieldState extends State<OtpTextField> {
   @override
   void didUpdateWidget(covariant OtpTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(oldWidget.clearText != widget.clearText && widget.clearText == true) {
-      for (var controller in _textControllers ){
+    if (oldWidget.clearText != widget.clearText && widget.clearText == true) {
+      for (var controller in _textControllers) {
         controller?.clear();
       }
       _verificationCode = List<String?>.filled(widget.numberOfFields, null);
-      setState((){
+      setState(() {
         widget.clearText = false;
       });
     }
@@ -113,8 +113,7 @@ class _OtpTextFieldState extends State<OtpTextField> {
   @override
   void dispose() {
     super.dispose();
-    _textControllers
-        .forEach((TextEditingController? controller) => controller?.dispose());
+    _textControllers.forEach((TextEditingController? controller) => controller?.dispose());
   }
 
   @override
@@ -149,6 +148,7 @@ class _OtpTextFieldState extends State<OtpTextField> {
                 counterText: "",
                 filled: widget.filled,
                 fillColor: widget.fillColor,
+                focusColor: widget.focusColor,
                 focusedBorder: widget.showFieldAsBox
                     ? outlineBorder(widget.focusedBorderColor)
                     : underlineInputBorder(widget.focusedBorderColor),
@@ -158,9 +158,7 @@ class _OtpTextFieldState extends State<OtpTextField> {
                 disabledBorder: widget.showFieldAsBox
                     ? outlineBorder(widget.disabledBorderColor)
                     : underlineInputBorder(widget.disabledBorderColor),
-                border: widget.showFieldAsBox
-                    ? outlineBorder(widget.borderColor)
-                    : underlineInputBorder(widget.borderColor),
+                border: widget.showFieldAsBox ? outlineBorder(widget.borderColor) : underlineInputBorder(widget.borderColor),
               ),
         obscureText: widget.obscureText,
         onChanged: (String value) {
@@ -215,7 +213,6 @@ class _OtpTextFieldState extends State<OtpTextField> {
       return _buildTextField(context: context, index: i);
     });
 
-
     return Row(
       mainAxisAlignment: widget.mainAxisAlignment,
       crossAxisAlignment: widget.crossAxisAlignment,
@@ -258,7 +255,7 @@ class _OtpTextFieldState extends State<OtpTextField> {
     required int indexOfTextField,
   }) {
     //only change focus to the previous textField if the value entered has a length zero
-    if (value.length == 0) {
+    if (value.length == 0 || value.isEmpty) {
       //if the textField in focus is not the first textField,
       // change focus to the previous textField
       if (indexOfTextField != 0) {
@@ -267,7 +264,6 @@ class _OtpTextFieldState extends State<OtpTextField> {
       }
     }
   }
-
 
   void onSubmit({required List<String?> verificationCode}) {
     if (verificationCode.every((String? code) => code != null && code != '')) {
